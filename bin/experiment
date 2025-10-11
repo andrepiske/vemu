@@ -20,7 +20,7 @@ def run_a_vm(name)
   result = nil
   vm.ssh_start do |ssh|
     result = ssh.exec!('uname -a')
-    puts result
+    # puts result
   end
 
   vm.stop
@@ -29,8 +29,11 @@ def run_a_vm(name)
   result
 end
 
-t = (1..2).map do |idx|
+t = (1..3).map do |idx|
   Thread.start do
+    # stop lima from crashing due to conflict on first time run
+    sleep(10) unless idx == 1
+
     puts "Start VM #{idx}"
     puts run_a_vm(idx.to_s)
   end
