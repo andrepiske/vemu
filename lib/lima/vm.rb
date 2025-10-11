@@ -18,11 +18,11 @@ class Lima::VM
       "limactl", "start",
       "-y", "--log-format=json",
       "--name=#{@name}",
-      "--arch=#{@arch}",
+      # "--arch=#{@arch}",
       "--cpus=#{@cpus}",
       "--memory=#{@memory}",
-      "--vm-type=#{@driver}",
-      "--network=lima:shared",
+      # "--vm-type=#{@driver}",
+      # "--network=lima:shared",
       @template,
     ]
   end

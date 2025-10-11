@@ -27,5 +27,12 @@ jobs:
           ruby-version: '3.4.6'
           bundler-cache: true
 
+      - name: Print arch info
+        run: |
+          set -eux
+          uname -m
+          uname -a
+          lsb_release -a
+
       - name: Run experiment
         run: bin/experiment
