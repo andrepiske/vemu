@@ -5,33 +5,48 @@ $:.unshift(File.expand_path(File.join(__dir__, '../lib')))
 require 'lima'
 
 require 'open3'
+puts OS.report
 
-vm = Lima::VM.new
-vm.name = 'rubylima'
-vm.cpus = 2
-vm.memory = 2
+def run_a_vm(name)
+  vm = Lima::VM.new
+  vm.name = "rlim-#{name}"
+  vm.cpus = 1
+  vm.memory = 1
+  vm.disk = '30'
 
-si, so, ww = Open3.popen2(*vm.start_command)
-si.close
+  vm.rm!
+  vm.start
 
-lines_read = []
-while !so.eof?
-  line = so.gets
+  result = nil
+  vm.ssh_start do |ssh|
+    result = ssh.exec!('uname -a')
+    puts result
+  end
 
-  lines_read << line
+  vm.stop
+  vm.rm!
 
-  puts "L: #{line}"
+  result
 end
 
-puts "Exit code: #{ww.value.exitstatus}"
+t = (1..2).map do |idx|
+  Thread.start do
+    puts "Start VM #{idx}"
+    puts run_a_vm(idx.to_s)
+  end
+end
 
-puts `ls -lh $HOME/.lima/rubylima/`
+t.each(&:join)
 
-puts vm.ssh_config
-
-ssh = vm.ssh_start
-
-result = ssh.exec!('ls -lh /')
-puts result
-
-`limactl rm -f rubylima`
+# puts "Exit code: #{ww.value.exitstatus}"
+#
+# puts `ls -lh $HOME/.lima/rubylima/`
+#
+# puts File.read(vm.ssh_config_path)
+#
+# ssh = vm.ssh_start
+#
+# result = ssh.exec!('ls -lh /')
+# puts result
+#
+# # `limactl rm -f rubylima`

@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem 'json'
-gem 'logger'
+gem 'os'
 
 gem 'net-ssh'
 gem 'ed25519'
@@ -11,3 +11,4 @@ gem 'bcrypt_pbkdf'
 
 # gem 'debug', require: false
 gem 'debug'
+gem 'logger'
