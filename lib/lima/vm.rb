@@ -26,4 +26,16 @@ class Lima::VM
       @template,
     ]
   end
+
+  def ssh_start(&blk)
+    Net::SSH.start("lima-#{@name}", nil, config: ssh_config_path, &blk)
+  end
+
+  def ssh_config
+    File.read(ssh_config_path)
+  end
+
+  def ssh_config_path
+    File.expand_path File.join(ENV['HOME'], ".lima/#{@name}/ssh.config")
+  end
 end

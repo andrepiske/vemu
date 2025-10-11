@@ -27,6 +27,11 @@ puts "Exit code: #{ww.value.exitstatus}"
 
 puts `ls -lh $HOME/.lima/rubylima/`
 
-puts `cat $HOME/.lima/rubylima/ssh.config`
+puts vm.ssh_config
 
-# debugger
+ssh = vm.ssh_start
+
+result = ssh.exec!('ls -lh /')
+puts result
+
+`limactl rm -f rubylima`
