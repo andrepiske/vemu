@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install lima
+        run: |
+          # Install jq for JSON parsing
+          sudo apt-get update && sudo apt-get install -y jq
+
+          # Get the latest release URL for Linux
+          LIMA_URL=$(curl -s https://api.github.com/repos/lima-vm/lima/releases/latest | jq -r '.assets[] | select(.name | contains("Linux") and endswith(".tar.gz")) | .browser_download_url' | head -1)
+
+          # Download and install lima
+          curl -sSL "$LIMA_URL" -o lima.tar.gz
+          sudo tar -xzf lima.tar.gz -C /usr/local
+
+          # Create symlink to limactl
+          LIMA_DIR=$(ls -d /usr/local/lima-*/ | head -1)
+          sudo ln -sf "$LIMA_DIR/bin/limactl" /usr/local/bin/limactl
+
+          # Verify installation
+          limactl --version
+
+      - name: Set up Ruby 3.4.6
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4.6'
+          bundler-cache: false
+
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Ensure bin/experiment is executable
+        run: chmod +x bin/experiment
+
+      - name: Run experiment
+        run: bin/experiment
+
+

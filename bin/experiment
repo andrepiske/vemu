@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+Bundler.require(:default)
+$:.unshift(File.expand_path(File.join(__dir__, '../lib')))
+require 'lima'
+
+require 'open3'
+
+vm = Lima::VM.new
+vm.name = 'rubylima'
+vm.cpus = 2
+vm.memory = 2
+
+si, so, ww = Open3.popen2(*vm.start_command)
+si.close
+
+lines_read = []
+while !so.eof?
+  line = so.gets
+
+  lines_read << line
+
+  puts "L: #{line}"
+end
+
+puts "Exit code: #{ww.value.exitstatus}"
+
+puts `ls -lh $HOME/.lima/rubylima/`
+
+puts `cat $HOME/.lima/rubylima/ssh.config`
+
+# debugger
