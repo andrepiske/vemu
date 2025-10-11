@@ -11,24 +11,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install lima
-        run: |
-          # Install jq for JSON parsing
-          sudo apt-get update && sudo apt-get install -y jq
+      - name: "Set up Lima"
+        uses: lima-vm/lima-actions/setup@v1
+        id: lima-actions-setup
 
-          # Get the latest release URL for Linux
-          LIMA_URL=$(curl -s https://api.github.com/repos/lima-vm/lima/releases/latest | jq -r '.assets[] | select(.name | contains("Linux") and endswith(".tar.gz")) | .browser_download_url' | head -1)
-
-          # Download and install lima
-          curl -sSL "$LIMA_URL" -o lima.tar.gz
-          sudo tar -xzf lima.tar.gz -C /usr/local
-
-          # Create symlink to limactl
-          LIMA_DIR=$(ls -d /usr/local/lima-*/ | head -1)
-          sudo ln -sf "$LIMA_DIR/bin/limactl" /usr/local/bin/limactl
-
-          # Verify installation
-          limactl --version
+      - name: "Cache ~/.cache/lima"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/lima
+          key: lima-${{ steps.lima-actions-setup.outputs.version }}
 
       - name: Set up Ruby 3.4.6
         uses: ruby/setup-ruby@v1
@@ -44,5 +35,3 @@ jobs:
 
       - name: Run experiment
         run: bin/experiment
-
-
