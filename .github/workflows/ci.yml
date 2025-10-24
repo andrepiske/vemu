@@ -15,6 +15,7 @@ jobs:
         run: |
           sudo /usr/bin/bash -c 'echo ''set man-db/auto-update false'' | debconf-communicate'
           sudo dpkg-reconfigure man-db
+          # sudo apt-get update -y && apt-get install -y bridge-utils
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -30,6 +31,29 @@ jobs:
           lsb_release -a
 
       - name: Print network info
+        run: |
+          set -eux
+
+          echo "IP Links:"
+
+          ip link
+
+          echo "IP Addresses:"
+
+          ip address
+
+      - name: Do some nasty stuff
+        run: |
+          set -eux
+
+          modprobe tun
+
+          ip tuntap add dev tap0 mode tap
+          ip link set dev eth0 master br0
+          ip link set dev tap0 master br0
+          ip link set br0 up
+
+      - name: Print network info again
         run: |
           set -eux
 
