@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+Bundler.require(:default)
+$:.unshift(File.expand_path(File.join(__dir__, '../lib')))
+# require 'lima'
+require 'vemu'
+
+require 'open3'
+# puts OS.report
+
+vm = Vemu::VM.new('early')
+vm.cloud_init.add_user(:lime, sudoer: true, ssh_keys: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJu+2F3cgwei6vVQUsBjv5P+Na8mtLSfRXelrpUXphbm')
+
+vm.invoke_qemu

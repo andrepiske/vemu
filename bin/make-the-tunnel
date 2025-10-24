@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+# Must grant this file permission:
+# setcap CAP_NET_ADMIN=eip bin/make-the-tunnel
+
+ip tuntap add dev tap0 mode tap
+
+ip link set dev tap0 master br0

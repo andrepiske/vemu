@@ -45,6 +45,7 @@ DEPENDENCIES
   logger
   net-ssh
   os
+  psych
 
 BUNDLED WITH
    2.7.2
