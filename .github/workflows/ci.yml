@@ -16,16 +16,6 @@ jobs:
           sudo /usr/bin/bash -c 'echo ''set man-db/auto-update false'' | debconf-communicate'
           sudo dpkg-reconfigure man-db
 
-      - name: "Set up Lima"
-        uses: lima-vm/lima-actions/setup@v1
-        id: lima-actions-setup
-
-      - name: "Cache ~/.cache/lima"
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/lima
-          key: lima-${{ steps.lima-actions-setup.outputs.version }}
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -39,5 +29,14 @@ jobs:
           uname -a
           lsb_release -a
 
-      - name: Run experiment
-        run: bin/experiment
+      - name: Print network info
+        run: |
+          set -eux
+
+          echo "IP Links:"
+
+          ip link
+
+          echo "IP Addresses:"
+
+          ip address
