@@ -14,6 +14,7 @@ module Vemu
       @users = []
       @instance_id = instance_id || host_name
       @host_name = host_name
+      @included_files = []
     end
 
     def add_user(user_name, sudoer: false, ssh_keys: nil, uid: nil)
@@ -35,6 +36,12 @@ module Vemu
       end
     end
 
+    attr_accessor :included_files
+
+    def include_file(path)
+      @included_files << path
+    end
+
     def create_isodisk(output_path:)
       # TODO: add dependency check => genisoimage --version
       #                            genisoimage 1.1.11 (Linux)
@@ -48,7 +55,7 @@ module Vemu
       all_files = [
         "#{ci_path}/user-data",
         "#{ci_path}/meta-data",
-      ]
+      ] + @included_files
       command = "genisoimage -r -J -V cidata -input-charset utf-8 -o #{output_path} #{all_files.join(' ')}"
       `#{command}`
 
@@ -74,10 +81,42 @@ module Vemu
           devices: ['/'],
         },
 
+        # packages
+        # package_update: true,
+        # packages: [
+        #   'neovim',
+        #   'curl',
+        #   'openssl',
+        #   'libyaml-0-2',
+        #   'zlib1g',
+        #   'libffi8',
+        #   'libgmp10'
+        # ],
+
         # mounts:
         timezone: @timezone,
 
         users:,
+
+        write_files: [
+          {
+            content: <<~BASH,
+              #!/bin/sh
+              set -eux
+              LIMA_CIDATA_MNT="/mnt/lima-cidata"
+              LIMA_CIDATA_DEV="/dev/disk/by-label/cidata"
+              mkdir -p -m 700 "${LIMA_CIDATA_MNT}"
+              mount -o ro,mode=0700,dmode=0700,overriderockperm,exec,uid=0 "${LIMA_CIDATA_DEV}" "${LIMA_CIDATA_MNT}"
+              export LIMA_CIDATA_MNT
+              cd $LIMA_CIDATA_MNT
+              # exec ga_init.sh
+              exec "${LIMA_CIDATA_MNT}"/ga_init.sh
+            BASH
+            owner: 'root:root',
+            path: '/var/lib/cloud/scripts/per-boot/00-vemu.boot.sh',
+            permissions: '0755'
+          }
+        ],
 
         final_message: <<~INFO,
           cloud-init has finished

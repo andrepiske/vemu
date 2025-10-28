@@ -16,15 +16,12 @@ jobs:
           sudo /usr/bin/bash -c 'echo ''set man-db/auto-update false'' | debconf-communicate'
           sudo dpkg-reconfigure man-db
 
-      - name: "Set up Lima"
-        uses: lima-vm/lima-actions/setup@v1
-        id: lima-actions-setup
+      - name: Set up Qemu
+        run: |
+          apt-get update -y
+          apt-get install -y qemu-system qemu-user-static qemu-kvm
 
-      - name: "Cache ~/.cache/lima"
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/lima
-          key: lima-${{ steps.lima-actions-setup.outputs.version }}
+          qemu-system-x86_64 --version
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -39,5 +36,10 @@ jobs:
           uname -a
           lsb_release -a
 
+      - name: Setup localruby
+        run: |
+          set -eux
+          curl -fsSL -o guest-support/localruby.tzst http://xb1-p.us-east-1.linodeobjects.com/localruby/localruby.tzst
+
       - name: Run experiment
-        run: bin/experiment
+        run: bin/experiment-qemu
