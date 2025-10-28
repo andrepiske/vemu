@@ -46,7 +46,8 @@ jobs:
         run: |
           set -eux
           mkdir -p .vemu/base-images
-          curl -fsSL -o .vemu/base-images/ubuntu-amd64.img https://cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
+          # time curl -fsSL -o .vemu/base-images/ubuntu-amd64.img https://cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
+          time curl -fsSL -o .vemu/base-images/ubuntu-amd64.img https://mirrorservice.org/sites/cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
 
       - name: Run experiment
         run: bin/experiment-qemu
