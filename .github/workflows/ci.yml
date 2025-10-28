@@ -62,3 +62,11 @@ jobs:
 
       - name: Run experiment
         run: bin/experiment-qemu
+
+      - name: Print serial log
+        run: |
+          echo "Cloud init:"
+          cat ~/.vemu/vms/early/cloud-init.yaml
+
+          echo "Serial log:"
+          cat ~/.vemu/vms/early/serial.log
