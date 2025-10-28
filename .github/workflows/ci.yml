@@ -18,8 +18,8 @@ jobs:
 
       - name: Set up Qemu
         run: |
-          apt-get update -y
-          apt-get install -y qemu-system qemu-user-static qemu-kvm
+          sudo apt-get update -y
+          sudo apt-get install -y qemu-system qemu-user-static qemu-kvm
 
           qemu-system-x86_64 --version
 
