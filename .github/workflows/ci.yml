@@ -54,10 +54,10 @@ jobs:
       - name: Fetch ubuntu image
         run: |
           set -eux
-          mkdir -p .vemu/base-images
-          if [ ! -f .vemu/base-images/ubuntu-amd64.img ]; then
-            # time curl -fsSL -o .vemu/base-images/ubuntu-amd64.img https://cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
-            time curl -fsSL -o .vemu/base-images/ubuntu-amd64.img https://mirrorservice.org/sites/cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
+          mkdir -p ~/.vemu/base-images
+          if [ ! -f ~/.vemu/base-images/ubuntu-amd64.img ]; then
+            # time curl -fsSL -o ~/.vemu/base-images/ubuntu-amd64.img https://cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
+            time curl -fsSL -o ~/.vemu/base-images/ubuntu-amd64.img https://mirrorservice.org/sites/cloud-images.ubuntu.com/releases/noble/release-20250704/ubuntu-24.04-server-cloudimg-amd64.img
           fi
 
       - name: Run experiment
