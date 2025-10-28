@@ -16,10 +16,11 @@ jobs:
           sudo /usr/bin/bash -c 'echo ''set man-db/auto-update false'' | debconf-communicate'
           sudo dpkg-reconfigure man-db
 
-      - name: Set up Qemu
+      - name: Set up Qemu and dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y qemu-system qemu-user-static qemu-kvm
+          sudo apt-get install -y qemu-system qemu-user-static qemu-kvm \
+            genisoimage
 
           qemu-system-x86_64 --version
 
